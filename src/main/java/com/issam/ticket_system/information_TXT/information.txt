@@ -1,0 +1,29 @@
+Request body :
+=> le role de @RequestBody est de convertir automatiquemet les le json vers un obj java !!!
+--------------------------------------------------------------------------------------------------------
+ResponseEntity
+=> on le voir apres dans l'application c bcp mieux
+-------------------------------------------------------------------------------
+Validation (@Valid)
+=> lorsque on envoir une requette http vers un API .. il ya la possiblitée dune mauvaise donnée , alors si
+on le verifie pas on peu avoir des donne incoherent dans la base de donée !!
+exemple :
+@NotBlank → champ obligatoire
+@Email → email valide
+@Size(min=6) → au moins 6 caractères
+### on teste dans les application
+-----------------------------------------------------------------------------
+@PathVariable :
+=> prend la valeur depuis le url et le met dans la fonction / variable
+--------------------------------------------------------------------------------------
+# DataSource :
+c'est l'obj qui permet a une application spring a se connecter a unne base de donnée
+pas de dataSource => pas de communication avec base de donnée
+----------------------------------------------------------------------------
+#@Entiry
+c'est une class java qui represnete une table dans la base de donnée
+--------------------------------------------------------------------------------------------------------------------
+JpaRepository (apres)
+--------------------------------------------------------------------------------------------------------------------
+@OneToMany
+=> Une entité possède plusieurs entités d’un autre type.

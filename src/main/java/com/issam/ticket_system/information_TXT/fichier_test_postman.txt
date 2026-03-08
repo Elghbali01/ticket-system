@@ -1,0 +1,21 @@
+add user !!!
+http://localhost:8080/users
+{
+ "id": 1,
+ "name": "issam1",
+ "email": "issam1@mail.com",
+ "password": "123456"
+}
+{
+ "id": 2,
+ "name": "issam2",
+ "email": "issam2@mail.com",
+ "password": "123456"
+}
+{
+ "id": 3,
+ "name": "issam3",
+ "email": "issam3@mail.com",
+ "password": "123456"
+}
+--------------------------------------------------------------
