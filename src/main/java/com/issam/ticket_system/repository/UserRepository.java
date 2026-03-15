@@ -11,4 +11,6 @@ public interface UserRepository  extends JpaRepository<User , Long> {
     .findAll() => récupérer tous
     .deleteById() => supprimer
      */
+    User findByEmail(String email);
+
 }

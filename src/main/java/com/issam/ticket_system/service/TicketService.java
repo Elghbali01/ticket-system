@@ -1,55 +1,92 @@
 package com.issam.ticket_system.service;
 
+import com.issam.ticket_system.dto.TicketCreateDTO;
+import com.issam.ticket_system.dto.TicketResponseDTO;
 import com.issam.ticket_system.entity.Ticket;
 import com.issam.ticket_system.entity.TicketHistory;
+import com.issam.ticket_system.entity.User;
+import com.issam.ticket_system.enums.TicketStatus;
+import com.issam.ticket_system.mapper.TicketMapper;
 import com.issam.ticket_system.repository.TicketHistoryRepository;
 import com.issam.ticket_system.repository.TicketRepository;
+import com.issam.ticket_system.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
-import com.issam.ticket_system.enums.TicketStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
 
     private TicketRepository ticketRepository;
     private TicketHistoryRepository ticketHistoryRepository;
+    private UserRepository userRepository;
 
     public TicketService(TicketRepository ticketRepository,
-                         TicketHistoryRepository ticketHistoryRepository) {
+                         TicketHistoryRepository ticketHistoryRepository,
+                         UserRepository userRepository) {
 
         this.ticketRepository = ticketRepository;
         this.ticketHistoryRepository = ticketHistoryRepository;
+        this.userRepository = userRepository;
     }
-    // créer ticket
-    public Ticket createTicket(Ticket ticket){
-        ticket.setStatus(TicketStatus.OPEN); // status initial
-        ticket.setCreatedAt(LocalDateTime.now()); // date création
-        return ticketRepository.save(ticket);
+
+    // CREATE
+    public TicketResponseDTO createTicket(TicketCreateDTO dto){
+
+        User user = userRepository.findById(dto.getUserId()).orElse(null);
+
+        Ticket ticket = TicketMapper.toEntity(dto, user);
+
+        ticket.setStatus(TicketStatus.OPEN);
+        ticket.setCreatedAt(LocalDateTime.now());
+
+        Ticket saved = ticketRepository.save(ticket);
+
+        return TicketMapper.toResponseDTO(saved);
     }
-    // récupérer tous les tickets
-    public List<Ticket> getAllTickets(){
-        return ticketRepository.findAll();
+
+    // GET ALL
+    public List<TicketResponseDTO> getAllTickets(){
+
+        return ticketRepository.findAll()
+                .stream()
+                .map(TicketMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
-    // récupérer ticket par id
-    public Ticket getTicketById (Long id){
-        return ticketRepository.findById(id).orElse(null);
-    }
-    // supprimer ticket
-    public  String deleteTicket(Long id){
-        if (!ticketRepository.existsById(id)){
-            return "ticket not found";
-        }
-        ticketRepository.deleteById(id);
-        return "ticket deleted successfully";
-    }
-    // changer le status
-    public Ticket changeStatus(Long id, TicketStatus newStatus) {
+
+    // GET BY ID
+    public TicketResponseDTO getTicketById(Long id){
 
         Ticket ticket = ticketRepository.findById(id).orElse(null);
 
-        if (ticket == null) {
+        if(ticket == null){
+            return null;
+        }
+
+        return TicketMapper.toResponseDTO(ticket);
+    }
+
+    // DELETE
+    public String deleteTicket(Long id){
+
+        if (!ticketRepository.existsById(id)){
+            return "ticket not found";
+        }
+
+        ticketRepository.deleteById(id);
+
+        return "ticket deleted successfully";
+    }
+
+    // CHANGE STATUS
+    public TicketResponseDTO changeStatus(Long id, TicketStatus newStatus){
+
+        Ticket ticket = ticketRepository.findById(id).orElse(null);
+
+        if(ticket == null){
             return null;
         }
 
@@ -57,7 +94,7 @@ public class TicketService {
 
         ticket.setStatus(newStatus);
 
-        Ticket updatedTicket = ticketRepository.save(ticket);
+        Ticket updated = ticketRepository.save(ticket);
 
         TicketHistory history = new TicketHistory(
                 "STATUS_CHANGE",
@@ -69,7 +106,6 @@ public class TicketService {
 
         ticketHistoryRepository.save(history);
 
-        return updatedTicket;
+        return TicketMapper.toResponseDTO(updated);
     }
-
 }

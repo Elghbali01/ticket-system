@@ -1,37 +1,49 @@
 package com.issam.ticket_system.controller;
 
-import com.issam.ticket_system.entity.User;
+import com.issam.ticket_system.dto.UserCreateDTO;
+import com.issam.ticket_system.dto.UserResponseDTO;
 import com.issam.ticket_system.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // cette classe peut recevoir des requêtes HTTP
-@RequestMapping("/users") //définit la base URL du controller.
+@RestController
+@RequestMapping("/users")
 public class UserController {
-    private UserService userService; // variable pour utiliser le service.
-    public UserController (UserService userService){
-        // injecter UserService dans UserController
-        this.userService=userService;
+
+    private UserService userService;
+
+    public UserController(UserService userService){
+        this.userService = userService;
     }
+
+    // CREATE
     @PostMapping
-    public User addUser(@Valid @RequestBody User user){
-        // valid => avant dexucuter la methode verifier les regle dans class user
-        return userService.addUser((user));
+    public UserResponseDTO addUser(@Valid @RequestBody UserCreateDTO dto){
+        return userService.addUser(dto);
     }
+
+    // GET ALL
     @GetMapping
-    public List<User> getUsers(){
-        return  userService.getUsers();
+    public List<UserResponseDTO> getUsers(){
+        return userService.getUsers();
     }
+
+    // GET BY ID
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
+    public UserResponseDTO getUserById(@PathVariable Long id){
         return userService.getUserById(id);
     }
+
+    // UPDATE
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id ,@RequestBody User user){
-        return userService.updateUser(id, user);
+    public UserResponseDTO updateUser(@PathVariable Long id,
+                                      @Valid @RequestBody UserCreateDTO dto){
+        return userService.updateUser(id, dto);
     }
+
+    // DELETE
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id){
         return userService.deleteUser(id);
